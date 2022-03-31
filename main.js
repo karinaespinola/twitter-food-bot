@@ -41,9 +41,7 @@ app.get('/callback', (req, res) => {
         // If you want to refresh your token later, store {refreshToken} (it is present if 'offline.access' has been given as scope)
   
         // Example request
-        const { data: userObject } = await loggedClient.v2.me();
-        console.log(userObject);
-        res.redirect('/hello');
+        req.session.accessToken = accessToken; 
       })
       .catch((err) => {
         console.log(err);
@@ -53,7 +51,13 @@ app.get('/callback', (req, res) => {
 
 app.get('hello', (req, res) => {
  res.send('Here we are!');
-})
+});
+
+app.get('/tweet', async (req, res) => {
+  const client = new TwitterApi(req.session.accessToken);
+  clg
+  await client.v2.tweet('test!');
+ })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
