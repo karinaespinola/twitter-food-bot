@@ -9,9 +9,13 @@ const port = 3000
 const appOnlyClient = new TwitterApi(process.env.TWITTER_BEARER_TOKEN);
 const rwClient = appOnlyClient.readWrite;
 
+app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
+
 app.get('/', (req, res) => {
   const client = new TwitterApi({ clientId: process.env.CLIENT_ID, clientSecret: process.env.CLIENT_SECRET });
   const { url, codeVerifier, state } = client.generateOAuth2AuthLink(process.env.CALLBACK_URL, { scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'] });
+  req.session.codeVerifier = codeVerifier;
+  req.session.state = state;
   res.redirect(url);
 });
 
@@ -20,7 +24,6 @@ app.get('/callback', (req, res) => {
     const { state, code } = req.query;
     // Get the saved oauth_token_secret from session
     const { codeVerifier, state: sessionState } = req.session;
-  
     if (!codeVerifier || !state || !sessionState || !code) {
       return res.status(400).send('You denied the app or your session expired!');
     }
@@ -41,8 +44,15 @@ app.get('/callback', (req, res) => {
         const { data: userObject } = await loggedClient.v2.me();
         console.log(data);
       })
-      .catch(() => res.status(403).send('Invalid verifier or access tokens!'));
+      .catch((err) => {
+        console.log(err);
+        res.status(403).send('Invalid verifier or access tokens!')
+      });
 });
+
+app.get('hello', (req, res) => {
+ res.send('Here we are!');
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
