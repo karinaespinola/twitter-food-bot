@@ -1,0 +1,32 @@
+{
+  "name": "twitter-food-bot",
+  "version": "1.0.0",
+  "description": "A cute little bot to tweet a recipe everyday :)",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karinaespinola/twitter-food-bot.git"
+  },
+  "keywords": [
+    "twitter",
+    "bot",
+    "food"
+  ],
+  "author": "Karina Espinola",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/karinaespinola/twitter-food-bot/issues"
+  },
+  "homepage": "https://github.com/karinaespinola/twitter-food-bot#readme",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "nodemon": "^2.0.15",
+    "twitter-api-client": "^1.5.2",
+    "twitter-api-v2": "^1.11.2"
+  }
+}
