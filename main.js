@@ -41,7 +41,9 @@ app.get('/callback', (req, res) => {
         // If you want to refresh your token later, store {refreshToken} (it is present if 'offline.access' has been given as scope)
   
         // Example request
-        req.session.accessToken = accessToken; 
+        req.session.accessToken = accessToken;
+        console.log(client);
+        await loggedClient.v2.tweet('test!');
       })
       .catch((err) => {
         console.log(err);
