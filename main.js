@@ -11,7 +11,7 @@ const rwClient = appOnlyClient.readWrite;
 
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
 
-app.get('/', (req, res) => {
+app.get('/auth', (req, res) => {
   const client = new TwitterApi({ clientId: process.env.CLIENT_ID, clientSecret: process.env.CLIENT_SECRET });
   const { url, codeVerifier, state } = client.generateOAuth2AuthLink(process.env.CALLBACK_URL, { scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'] });
   req.session.codeVerifier = codeVerifier;
@@ -43,7 +43,8 @@ app.get('/callback', (req, res) => {
         // Example request
         req.session.accessToken = accessToken;
         console.log(client);
-        await loggedClient.v2.tweet('test!');
+        console.log(expiresIn);
+        //await loggedClient.v2.tweet('test!');
       })
       .catch((err) => {
         console.log(err);
@@ -57,8 +58,7 @@ app.get('hello', (req, res) => {
 
 app.get('/tweet', async (req, res) => {
   const client = new TwitterApi(req.session.accessToken);
-  clg
-  await client.v2.tweet('test!');
+  await client.v2.tweet('We are very happy!');
  })
 
 app.listen(port, () => {
