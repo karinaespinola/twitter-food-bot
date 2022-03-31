@@ -1,5 +1,6 @@
 const express = require('express')
-const app = express()
+const app = express();
+const session = require('express-session');
 const dotenv = require('dotenv');
 dotenv.config();
 const { TwitterApi } = require('twitter-api-v2');
@@ -7,8 +8,6 @@ const port = 3000
 
 const appOnlyClient = new TwitterApi(process.env.TWITTER_BEARER_TOKEN);
 const rwClient = appOnlyClient.readWrite;
-const codeVerifier = null;
-const state = null;
 
 app.get('/', (req, res) => {
   const client = new TwitterApi({ clientId: process.env.CLIENT_ID, clientSecret: process.env.CLIENT_SECRET });
