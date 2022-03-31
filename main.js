@@ -42,7 +42,8 @@ app.get('/callback', (req, res) => {
   
         // Example request
         const { data: userObject } = await loggedClient.v2.me();
-        console.log(data);
+        console.log(userObject);
+        res.redirect('/hello');
       })
       .catch((err) => {
         console.log(err);
