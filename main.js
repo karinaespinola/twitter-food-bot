@@ -1,12 +1,29 @@
+require('dotenv').config();
 const express = require('express')
 const app = express();
 const session = require('express-session');
-const dotenv = require('dotenv');
-dotenv.config();
 const { TwitterApi } = require('twitter-api-v2');
-const port = 3000
+const port = 3000;
+const mongoose = require('mongoose');
+const connectDB = require('./config/dbConn');
+const { getAccessToken } = require('./helpers/auth');
 
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
+// Connect to MongoDB
+connectDB();
+
+// 'CONTENT-TYPE: application/x-www-form-urlencoded'
+app.use(express.urlencoded({ extended: false }));
+
+// built-in middleware for json
+app.use(express.json());
+
+
+app.use(session({ 
+  secret: 'keyboard cat',
+  cookie: { maxAge: 60000 },
+  resave: false,
+  saveUninitialized: false
+}));
 
 app.get('/auth', (req, res) => {
   const client = new TwitterApi({ clientId: process.env.CLIENT_ID, clientSecret: process.env.CLIENT_SECRET });
@@ -34,6 +51,8 @@ app.get('/callback', (req, res) => {
     client.loginWithOAuth2({ code, codeVerifier, redirectUri: process.env.CALLBACK_URL })
       .then(async({ client: loggedClient, accessToken, refreshToken, expiresIn }) => {
         // 1. Check if there is already an accessToken in the database
+        const currentAccessToken = getAccessToken();
+        console.log(currentAccessToken);
         // 2. Update/Create accessToken in the database
         })
       .catch((err) => {
@@ -50,7 +69,10 @@ app.get('/tweet', async (req, res) => {
   // 
  })
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+ mongoose.connection.once('open', () => {
+  console.log('Connected to MongoDB');
+  app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`)
+  });
+});
 
