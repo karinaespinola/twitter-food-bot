@@ -6,9 +6,6 @@ dotenv.config();
 const { TwitterApi } = require('twitter-api-v2');
 const port = 3000
 
-const appOnlyClient = new TwitterApi(process.env.TWITTER_BEARER_TOKEN);
-const rwClient = appOnlyClient.readWrite;
-
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
 
 app.get('/auth', (req, res) => {
@@ -36,16 +33,9 @@ app.get('/callback', (req, res) => {
   
     client.loginWithOAuth2({ code, codeVerifier, redirectUri: process.env.CALLBACK_URL })
       .then(async({ client: loggedClient, accessToken, refreshToken, expiresIn }) => {
-        // {loggedClient} is an authenticated client in behalf of some user
-        // Store {accessToken} somewhere, it will be valid until {expiresIn} is hit.
-        // If you want to refresh your token later, store {refreshToken} (it is present if 'offline.access' has been given as scope)
-  
-        // Example request
-        req.session.accessToken = accessToken;
-        console.log(client);
-        console.log(expiresIn);
-        //await loggedClient.v2.tweet('test!');
-      })
+        // 1. Check if there is already an accessToken in the database
+        // 2. Update/Create accessToken in the database
+        })
       .catch((err) => {
         console.log(err);
         res.status(403).send('Invalid verifier or access tokens!')
@@ -57,8 +47,7 @@ app.get('hello', (req, res) => {
 });
 
 app.get('/tweet', async (req, res) => {
-  const client = new TwitterApi(req.session.accessToken);
-  await client.v2.tweet('We are very happy!');
+  // 
  })
 
 app.listen(port, () => {
