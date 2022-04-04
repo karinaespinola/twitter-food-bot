@@ -7,6 +7,7 @@ const port = 3000;
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const { getAccessToken, createAccessToken, updateAccessToken } = require('./helpers/auth');
+const { getRecipe } = require('./helpers/recipes');
 
 // Connect to MongoDB
 connectDB();
@@ -58,7 +59,9 @@ app.get('/callback', async (req, res) => {
         else { // Update access token
           await updateAccessToken(accessToken);
         }
-
+        // 2. Get the recipe from the API
+        await getRecipe();
+        
         })
       .catch((err) => {
         console.log(err);
