@@ -38,7 +38,7 @@ const createAccessToken = async(newAccessToken) => {
  */
 const updateAccessToken = async (newAccessToken) => {
   try {
-    const filter = { name: process.env.TOKEN_IDENTIFIER };
+    const filter = { name: 'accessToken' };
     const update = { value: newAccessToken };
 
     const updatedToken = await Token.findOneAndUpdate(filter, update, {
