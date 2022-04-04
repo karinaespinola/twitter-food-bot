@@ -59,9 +59,7 @@ app.get('/callback', async (req, res) => {
         else { // Update access token
           await updateAccessToken(accessToken);
         }
-        // 2. Get the recipe from the API
-        await getRecipe();
-        
+        res.redirect('/welcome');
         })
       .catch((err) => {
         console.log(err);
@@ -72,6 +70,10 @@ app.get('/callback', async (req, res) => {
 app.get('hello', (req, res) => {
  res.send('Here we are!');
 });
+
+app.get('/welcome', (req, res) => {
+  res.send('Auth token updated!');
+ });
 
 app.get('/tweet', async (req, res) => {
   // 
