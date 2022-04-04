@@ -49,4 +49,4 @@ const updateAccessToken = async (newAccessToken) => {
   }
 }
 
-module.exports = { getAccessToken, createAccessToken };
+module.exports = { getAccessToken, createAccessToken, updateAccessToken };
