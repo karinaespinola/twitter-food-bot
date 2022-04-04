@@ -52,7 +52,6 @@ app.get('/callback', async (req, res) => {
       .then(async({ client: loggedClient, accessToken, refreshToken, expiresIn }) => {
         // 1. Check if there is already an accessToken in the database
         const currentAccessToken = await getAccessToken();
-        console.log(currentAccessToken);
         // 2. Update/Create accessToken in the database
         })
       .catch((err) => {
