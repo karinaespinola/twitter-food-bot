@@ -54,10 +54,10 @@ app.get('/callback', async (req, res) => {
         // 1. Check if there is already an accessToken in the database
         const currentAccessToken = await getAccessToken();
         if(currentAccessToken.length == 0) { // Create token record
-          await createAccessToken(accessToken);          
+          await createAccessToken(accessToken, refreshToken);          
         }
         else { // Update access token
-          await updateAccessToken(accessToken);
+          await updateAccessToken(accessToken, refreshToken);
         }
         res.redirect('/welcome');
         })

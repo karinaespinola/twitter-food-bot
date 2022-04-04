@@ -1,4 +1,5 @@
 const Token = require('../models/Token');
+const { TwitterApi } = require('twitter-api-v2');
 /**
  * Get access token from the database if any
  * @returns JSON or null if token not found
@@ -47,6 +48,18 @@ const updateAccessToken = async (newAccessToken) => {
   } catch (error) {
       throw new Error('There was an error when updating the token in the database');
   }
+}
+
+const refreshToken = async () => {
+  const client = new TwitterApi({ clientId: process.env.CLIENT_ID, clientSecret: process.env.CLIENT_SECRET });
+  const currentToken = await getAccessToken();
+  // Obtain the {refreshToken} from your DB/store
+  const { client: refreshedClient, accessToken, refreshToken: newRefreshToken } = await client.refreshOAuth2Token(currentToken[0].value);
+  
+  // Store refreshed {accessToken} and {newRefreshToken} to replace the old ones
+  
+  // Example request
+  await refreshedClient.v2.me();
 }
 
 module.exports = { getAccessToken, createAccessToken, updateAccessToken };
