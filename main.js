@@ -33,7 +33,7 @@ app.get('/auth', (req, res) => {
   res.redirect(url);
 });
 
-app.get('/callback', (req, res) => {
+app.get('/callback', async (req, res) => {
     // Extract state and code from query string
     const { state, code } = req.query;
     // Get the saved oauth_token_secret from session
@@ -51,7 +51,7 @@ app.get('/callback', (req, res) => {
     client.loginWithOAuth2({ code, codeVerifier, redirectUri: process.env.CALLBACK_URL })
       .then(async({ client: loggedClient, accessToken, refreshToken, expiresIn }) => {
         // 1. Check if there is already an accessToken in the database
-        const currentAccessToken = getAccessToken();
+        const currentAccessToken = await getAccessToken();
         console.log(currentAccessToken);
         // 2. Update/Create accessToken in the database
         })
