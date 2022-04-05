@@ -1,45 +1,48 @@
 const Token = require('../models/Token');
 const { TwitterApi } = require('twitter-api-v2');
 /**
- * Get access token from the database if any
+ * Get a token from the database
+ * @param {String} tokenType Type of token. Possible values: refreshToken, accessToken 
  * @returns JSON or null if token not found
  */
 
-const getAccessToken = async() => {
+const getToken = async(tokenType) => {
   try {
-    const currentAccessToken = await Token.find({name: process.env.TOKEN_IDENTIFIER}).exec();
-    return currentAccessToken;
+    const token = await Token.find({name: tokenType}).exec();
+    return token;
   } catch(err) {
     throw new Error('There was an issue connecting retrieving the token from the database.');
   }  
 }
 
 /**
- * Creates the record on the database of the access token
- * @param {String} newAccessToken The new value of the accessToken
+ * Creates the record on the database of a token
+ * @param {String} tokenType The token type. Possible values: accessToken, refreshToken
+ * @param {String} tokenValue The new value of the accessToken
  */
-const createAccessToken = async(newAccessToken) => {
+const createToken = async(tokenType, tokenValue) => {
   try {
     const newToken = new Token({
-      name: process.env.TOKEN_IDENTIFIER,
-      value: newAccessToken
+      name: tokenType,
+      value: tokenValue
     });
     await newToken.save();
     return true;
   } catch (error) {
-    throw new Error('There was an issue when creating the access token record in the database');
+    throw new Error('There was an issue when creating the token record in the database');
   }
 }
 
 /**
- * Updates the access token in the database
- * @param {String} newAccessToken The new value to assign to the access token in the database
+ * Updates a token record in the database
+ * @param {String} tokenType Type of token to update
+ * @param {String} newToken The new value to assign to the token in the database
  * @returns JSON with the updated token record
  */
-const updateAccessToken = async (newAccessToken) => {
+const updateToken = async (newToken) => {
   try {
-    const filter = { name: 'accessToken' };
-    const update = { value: newAccessToken };
+    const filter = { name: tokenType };
+    const update = { value: newToken };
 
     const updatedToken = await Token.findOneAndUpdate(filter, update, {
     new: true
@@ -50,6 +53,9 @@ const updateAccessToken = async (newAccessToken) => {
   }
 }
 
+/**
+ * Refreshes the current access token using the Twitter API
+ */
 const refreshToken = async () => {
   const client = new TwitterApi({ clientId: process.env.CLIENT_ID, clientSecret: process.env.CLIENT_SECRET });
   const currentToken = await getAccessToken();
