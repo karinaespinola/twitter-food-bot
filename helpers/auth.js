@@ -68,4 +68,4 @@ const refreshToken = async () => {
   await refreshedClient.v2.me();
 }
 
-module.exports = { getAccessToken, createAccessToken, updateAccessToken };
+module.exports = { getToken, createToken, updateToken };
