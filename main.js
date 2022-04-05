@@ -59,7 +59,7 @@ app.get('/callback', async (req, res) => {
         }
         else { // Update access token
           await updateToken('accessToken', accessToken);
-          await updateToken('refreshToken', accessToken);
+          await updateToken('refreshToken', refreshToken);
         }
         res.redirect('/welcome');
         })

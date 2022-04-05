@@ -39,7 +39,7 @@ const createToken = async(tokenType, tokenValue) => {
  * @param {String} newToken The new value to assign to the token in the database
  * @returns JSON with the updated token record
  */
-const updateToken = async (newToken) => {
+const updateToken = async (tokenType, newToken) => {
   try {
     const filter = { name: tokenType };
     const update = { value: newToken };
