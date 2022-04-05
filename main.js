@@ -6,7 +6,7 @@ const { TwitterApi } = require('twitter-api-v2');
 const port = 3000;
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
-const { getAccessToken, createAccessToken, updateAccessToken } = require('./helpers/auth');
+const { getToken, createToken, updateToken } = require('./helpers/auth');
 const { getRecipe } = require('./helpers/recipes');
 
 // Connect to MongoDB
@@ -52,12 +52,14 @@ app.get('/callback', async (req, res) => {
     client.loginWithOAuth2({ code, codeVerifier, redirectUri: process.env.CALLBACK_URL })
       .then(async({ client: loggedClient, accessToken, refreshToken, expiresIn }) => {
         // 1. Check if there is already an accessToken in the database
-        const currentAccessToken = await getAccessToken();
+        const currentAccessToken = await getToken('accessToken');
         if(currentAccessToken.length == 0) { // Create token record
-          await createAccessToken(accessToken, refreshToken);          
+          await createToken('accessToken', accessToken);
+          await createToken('refreshToken', refreshToken);          
         }
         else { // Update access token
-          await updateAccessToken(accessToken, refreshToken);
+          await updateToken('accessToken', accessToken);
+          await updateToken('refreshToken', accessToken);
         }
         res.redirect('/welcome');
         })
