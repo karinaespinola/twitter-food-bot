@@ -11,7 +11,8 @@ const getToken = async(tokenType) => {
     const token = await Token.find({name: tokenType}).exec();
     return token[0].value;
   } catch(err) {
-    throw new Error('There was an issue connecting retrieving the token from the database.');
+    console.log(err);
+    throw new Error(err);
   }  
 }
 
@@ -57,22 +58,22 @@ const updateToken = async (tokenType, newToken) => {
  * Refreshes the current access token using the Twitter API
  * @returns {Object} New access and refresh token
  */
-const refreshToken = async () => {
-
+const refreshTokens = async () => {
   try {
     const client = new TwitterApi({ clientId: process.env.CLIENT_ID, clientSecret: process.env.CLIENT_SECRET });
     const currentRefreshToken = await getToken('refreshToken');
+    console.log(currentRefreshToken);
     // Obtain the {refreshToken} from your DB/store
-    const { client: refreshedClient, accessToken, refreshToken: newRefreshToken } = await client.refreshOAuth2Token(currentRefreshToken[0].value);
+    const { client: refreshedClient, accessToken, refreshToken: newRefreshToken } = await client.refreshOAuth2Token(currentRefreshToken);
     
     // Store refreshed {accessToken} and {newRefreshToken} to replace the old ones
     await updateToken('accessToken', accessToken);
-    await updateToken('refreshToken', refreshToken);
-    return { accessToken, refreshToken }
+    await updateToken('refreshToken', newRefreshToken);
+    return { accessToken, refreshToken: newRefreshToken }
   } catch (error) {
     throw new Error("There was an error while refreshing the access token. More info:" + error);
   }
 
 }
 
-module.exports = { getToken, createToken, updateToken, refreshToken };
+module.exports = { getToken, createToken, updateToken, refreshTokens };
