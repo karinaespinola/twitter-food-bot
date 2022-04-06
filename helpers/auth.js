@@ -9,7 +9,7 @@ const { TwitterApi } = require('twitter-api-v2');
 const getToken = async(tokenType) => {
   try {
     const token = await Token.find({name: tokenType}).exec();
-    return token;
+    return token[0].value;
   } catch(err) {
     throw new Error('There was an issue connecting retrieving the token from the database.');
   }  
