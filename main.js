@@ -52,16 +52,21 @@ app.get('/callback', async (req, res) => {
     client.loginWithOAuth2({ code, codeVerifier, redirectUri: process.env.CALLBACK_URL })
       .then(async({ client: loggedClient, accessToken, refreshToken, expiresIn }) => {
         // 1. Check if there is already an accessToken in the database
-        const currentAccessToken = await getToken('accessToken');
-        if(currentAccessToken.length == 0) { // Create token record
-          await createToken('accessToken', accessToken);
-          await createToken('refreshToken', refreshToken);          
+        try {
+          const currentAccessToken = await getToken('accessToken');
+          if(currentAccessToken.length == 0) { // Create token record
+            await createToken('accessToken', accessToken);
+            await createToken('refreshToken', refreshToken);          
+          }
+          else { // Update access token
+            await updateToken('accessToken', accessToken);
+            await updateToken('refreshToken', refreshToken);
+          }
+          res.redirect('/welcome');
+        } catch (error) {
+          res.status(403).send('There was an error while authorizing. More info:' + error);
         }
-        else { // Update access token
-          await updateToken('accessToken', accessToken);
-          await updateToken('refreshToken', refreshToken);
-        }
-        res.redirect('/welcome');
+
         })
       .catch((err) => {
         console.log(err);
