@@ -55,16 +55,24 @@ const updateToken = async (tokenType, newToken) => {
 
 /**
  * Refreshes the current access token using the Twitter API
+ * @returns {Object} New access and refresh token
  */
 const refreshToken = async () => {
-  const client = new TwitterApi({ clientId: process.env.CLIENT_ID, clientSecret: process.env.CLIENT_SECRET });
-  const currentRefreshToken = await getToken('refreshToken');
-  // Obtain the {refreshToken} from your DB/store
-  const { client: refreshedClient, accessToken, refreshToken: newRefreshToken } = await client.refreshOAuth2Token(currentRefreshToken[0].value);
-  
-  // Store refreshed {accessToken} and {newRefreshToken} to replace the old ones
-  await updateToken('accessToken', accessToken);
-  await updateToken('refreshToken', refreshToken);
+
+  try {
+    const client = new TwitterApi({ clientId: process.env.CLIENT_ID, clientSecret: process.env.CLIENT_SECRET });
+    const currentRefreshToken = await getToken('refreshToken');
+    // Obtain the {refreshToken} from your DB/store
+    const { client: refreshedClient, accessToken, refreshToken: newRefreshToken } = await client.refreshOAuth2Token(currentRefreshToken[0].value);
+    
+    // Store refreshed {accessToken} and {newRefreshToken} to replace the old ones
+    await updateToken('accessToken', accessToken);
+    await updateToken('refreshToken', refreshToken);
+    return { accessToken, refreshToken }
+  } catch (error) {
+    throw new Error("There was an error while refreshing the access token. More info:" + error);
+  }
+
 }
 
 module.exports = { getToken, createToken, updateToken, refreshToken };
