@@ -1,5 +1,9 @@
 const axios = require('axios');
 
+/**
+ * Get the recipe from the API
+ * @returns {Object} Recipe in JSON format
+ */
 const getRecipe = async () => {
   try {
     const recipe = await axios.get(`https://api.spoonacular.com/recipes/random?apiKey=${process.env.SPOONACULAR_API_KEY}&number=1`);
