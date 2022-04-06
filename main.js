@@ -7,8 +7,7 @@ const port = 3000;
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const { getToken, createToken, updateToken } = require('./helpers/auth');
-const { getRecipe } = require('./helpers/recipes');
-const { getTweetMessage } = require('./helpers/tweet');
+const { tweet, createTweetMessage } = require('./helpers/tweet');
 
 // Connect to MongoDB
 connectDB();
@@ -87,7 +86,14 @@ app.get('/tweet', async (req, res) => {
   // if(req.query.clientid !== process.env.CLIENT_ID) {
   //   res.status(403).send('Sorry! You are not allowed here. Please tell your cat I said pspspsps :3');
   // }
+  try {
   // 1.  Get the tweet message
+  const tweetMessage = await createTweetMessage();
+  // 2. Tweet!
+  await tweet(tweetMessage)
+  } catch (error) {
+    res.status(403).send(error);
+  }
 
  })
 
