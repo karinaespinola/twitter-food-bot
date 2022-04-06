@@ -3,7 +3,6 @@ const express = require('express')
 const app = express();
 const session = require('express-session');
 const { TwitterApi } = require('twitter-api-v2');
-const port = 3000;
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const { getToken, createToken, updateToken } = require('./helpers/auth');
@@ -100,8 +99,8 @@ app.get('/tweet', async (req, res) => {
 
  mongoose.connection.once('open', () => {
   console.log('Connected to MongoDB');
-  app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+  app.listen(process.env.PORT, () => {
+    console.log(`Example app listening at http://localhost:${process.env.PORT}`)
   });
 });
 
