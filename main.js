@@ -90,7 +90,8 @@ app.get('/tweet', async (req, res) => {
   // 1.  Get the tweet message
   const tweetMessage = await createTweetMessage();
   // 2. Tweet!
-  await tweet(tweetMessage)
+  await tweet(tweetMessage);
+  res.send('Yay! We just tweeted!');
   } catch (error) {
     res.status(403).send(error);
   }
